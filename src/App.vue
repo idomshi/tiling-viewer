@@ -13,6 +13,11 @@ const maxsize = ref(0)
 const images = ref<string[]>([
 ])
 
+// imagesからitemを消す。
+function removeItem(index: number) {
+  images.value.splice(index, 1)
+}
+
 // dndでファイルを受け取る。
 function fileDrop(ev: Event) {
   if (!(ev instanceof DragEvent)) return
@@ -90,7 +95,7 @@ onUnmounted(() => {
     </div>
     <div ref="tilingcontainer" class="tilingcontainer" @drop.prevent="fileDrop" @dragover.prevent="() => { }">
       <ul class="imagelist">
-        <ImageItem v-for="(url, i) of images" :key="i" :url="url" :size="size" />
+        <ImageItem v-for="(url, i) of images" :key="i" :url="url" :size="size" @remove="() => removeItem(i)" />
       </ul>
     </div>
   </div>
