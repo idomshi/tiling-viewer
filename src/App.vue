@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import ImageItem from './components/ImageItem.vue';
 const tilingcontainer = ref<HTMLDivElement>()
-
-// 全体表示か拡大表示か
-const bgsize = ref<"cover" | "contain">("cover")
 
 // マス間の空き
 const _gapsize = ref(1)
@@ -64,7 +62,7 @@ function sizeChange() {
 
 const size = computed(() => {
   const imageNum = images.value.length
-  if (imageNum === 0) return maxsize.value
+  if (imageNum === 0) return `${maxsize.value}px`
   const rowNum = Math.ceil(Math.sqrt(imageNum))
   const gap = _gapsize.value * 4
   let width = (containerWidth.value - (rowNum - 1) * gap) / rowNum
@@ -91,10 +89,8 @@ onUnmounted(() => {
       <p>drop image here.</p>
     </div>
     <div ref="tilingcontainer" class="tilingcontainer" @drop.prevent="fileDrop" @dragover.prevent="() => { }">
-      <ul>
-        <li v-for="(url, i) of images" :key="i">
-          <div class="image" :style="`background-image: url('${url}');`"></div>
-        </li>
+      <ul class="imagelist">
+        <ImageItem v-for="(url, i) of images" :key="i" :url="url" :size="size" />
       </ul>
     </div>
   </div>
@@ -107,7 +103,7 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-ul {
+.imagelist {
   margin: 0;
   list-style: none;
   padding: 0;
@@ -116,19 +112,6 @@ ul {
   flex-wrap: wrap;
   gap: v-bind(gapsize);
   line-height: 0;
-}
-
-li {
-  margin: 0;
-  padding: 0;
-}
-
-.image {
-  width: v-bind(size);
-  height: v-bind(size);
-  background-size: v-bind(bgsize);
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 .noimage {
