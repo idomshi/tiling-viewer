@@ -12,11 +12,23 @@ const emit = defineEmits<{
 
 // 全体表示か拡大表示か
 const bgsize = ref<"cover" | "contain">("cover")
+
+// ポインタが要素の上に載っているか
+const isPointerHover = ref(false)
+
+function pointerEnter(ev: Event) {
+  if (!(ev instanceof PointerEvent)) return
+  isPointerHover.value = true
+}
+function pointerLeave(ev: Event) {
+  if (!(ev instanceof PointerEvent)) return
+  isPointerHover.value = false
+}
 </script>
 
 <template>
-  <li class="item">
-    <div class="deletebutton" @click="() => emit('remove')">x</div>
+  <li class="item" @pointerenter="pointerEnter" @pointerleave="pointerLeave">
+    <div class="deletebutton" :class="{ visible: isPointerHover }" @click="() => emit('remove')">x</div>
     <div class="image" :style="`background-image: url('${url}');`"></div>
   </li>
 </template>
@@ -40,7 +52,7 @@ const bgsize = ref<"cover" | "contain">("cover")
   background-color: #7888c0;
   width: 24px;
   height: 24px;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -51,5 +63,9 @@ const bgsize = ref<"cover" | "contain">("cover")
   border: 1px white solid;
   box-sizing: border-box;
   cursor: pointer;
+}
+
+.visible {
+  display: flex;
 }
 </style>
